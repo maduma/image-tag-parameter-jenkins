@@ -1,0 +1,4 @@
+<?jelly escape-by-default='true'?>
+<div>
+    Lets you specify a set of image tag that can be picked from as a build parameter.
+</div>

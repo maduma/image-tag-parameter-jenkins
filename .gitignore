@@ -1,0 +1,8 @@
+work/
+\.classpath
+\.factorypath
+\.gitignore/
+\.project
+\.settings/
+\.vscode/
+target/

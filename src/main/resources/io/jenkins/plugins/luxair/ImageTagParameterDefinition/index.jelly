@@ -1,0 +1,24 @@
+<?jelly escape-by-default='true'?>
+<j:jelly xmlns:j="jelly:core" xmlns:st="jelly:stapler" xmlns:d="jelly:define"
+         xmlns:l="/lib/layout" xmlns:t="/lib/hudson" xmlns:f="/lib/form"
+         xmlns:i="jelly:fmt" xmlns:p="/lib/hudson/project">
+
+    <f:entry title="${it.name}" description="${it.description}">
+        <!-- this div is required because of ParametersDefinitionProperty.java#117 -->
+        <div name="parameter" description="${it.description}">
+            <input type="hidden" name="name" value="${it.name}" />
+            <input type="hidden" name="description" value="${it.description}" />
+
+
+            <select name="value" style="width:100px; margin-left: 15px;">
+                <j:forEach var="aTag" items="${it.displayableTags}" varStatus="loop">
+                    <j:choose>
+                        <option value="${aTag}">${aTag}</option>
+                    </j:choose>
+                </j:forEach>
+            </select>
+
+        </div>
+    </f:entry>
+
+</j:jelly>

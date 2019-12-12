@@ -1,0 +1,17 @@
+<!-- this is the page fragment displayed to set up a job -->
+<?jelly escape-by-default='true'?>
+<j:jelly xmlns:j="jelly:core" xmlns:st="jelly:stapler" xmlns:f="/lib/form">
+
+    <f:entry title="${%Image Name}" field="image">
+		<f:textbox name="parameter.image" value="${instance.image}" />
+	</f:entry>
+
+    <f:entry title="${%Regitry URL}" field="registry">
+		<f:textbox name="parameter.registry" value="${instance.registry}" />
+	</f:entry>
+
+    <f:entry title="${%Registry Credential}" field="credential">
+		<f:textbox name="parameter.credential" value="${instance.credential}" />
+	</f:entry>
+
+</j:jelly>
