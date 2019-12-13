@@ -11,7 +11,7 @@
 
 
             <select name="value" style="width:100px; margin-left: 15px;">
-                <j:forEach var="aTag" items="${it.displayableTags}" varStatus="loop">
+                <j:forEach var="aTag" items="${it.tags}" varStatus="loop">
                     <j:choose>
                         <option value="${aTag}">${aTag}</option>
                     </j:choose>

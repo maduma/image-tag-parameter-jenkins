@@ -2,6 +2,7 @@ package io.jenkins.plugins.luxair;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import org.kohsuke.stapler.DataBoundConstructor;
@@ -15,7 +16,7 @@ import net.sf.json.JSONObject;
 
 public class ImageTagParameterDefinition extends SimpleParameterDefinition {
 
-    private static final Logger LOGGER = Logger.getLogger(ImageTagParameterDefinition.class.getName());
+    private static final Logger logger = Logger.getLogger(ImageTagParameterDefinition.class.getName());
 
     private String image;
     private String registry;
@@ -27,6 +28,7 @@ public class ImageTagParameterDefinition extends SimpleParameterDefinition {
         this.image = image;
         this.registry = registry;
         this.credentialid = credentialid;
+        logger.log(Level.INFO, "Object ImageTagParameterDefinition created.");
     }
 
     public String getImage() {
@@ -41,27 +43,25 @@ public class ImageTagParameterDefinition extends SimpleParameterDefinition {
         return credentialid;
     }
 
-    public List<String> getDisplayableTags() {
+    public List<String> getTags() {
         List<String> imageTags;
         imageTags = new ArrayList<String>();
         imageTags.add(registry + "/" + image + ":" + "v0.1");
         imageTags.add(registry + "/" + image + ":" + "v0.2");
+        logger.log(Level.INFO, "ImageTagParameterDefinition.getTags() called.");
         return imageTags;
     }
-    /**
-     *
-     */
+
     private static final long serialVersionUID = 3938123092372L;
 
     @Override
     public ParameterValue createValue(String value) {
-        return new ImageTagParameterValue(getName(), getDescription(), value);
+        return new StringParameterValue(getName(), value, getDescription());
     }
 
     @Override
     public ParameterValue createValue(StaplerRequest req, JSONObject jo) {
-        StringParameterValue paramValue = req.bindJSON(StringParameterValue.class, jo);
-        return new ImageTagParameterValue(paramValue.getName(), paramValue.getDescription(), (String)paramValue.getValue());
+        return req.bindJSON(StringParameterValue.class, jo);
     }
 
     @Extension
