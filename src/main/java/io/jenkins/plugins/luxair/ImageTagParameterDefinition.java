@@ -45,10 +45,9 @@ public class ImageTagParameterDefinition extends SimpleParameterDefinition {
 
     public List<String> getTags() {
         List<String> imageTags;
-        imageTags = new ArrayList<String>();
-        imageTags.add(registry + "/" + image + ":" + "v0.1");
-        imageTags.add(registry + "/" + image + ":" + "v0.2");
-        logger.log(Level.INFO, "ImageTagParameterDefinition.getTags() called.");
+        String user = null;
+        String password = null;
+        imageTags = ImageTag.getTags(image, registry, user, password);
         return imageTags;
     }
 
