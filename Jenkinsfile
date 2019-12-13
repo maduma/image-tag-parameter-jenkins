@@ -7,6 +7,7 @@ pipeline {
             agent {
                 docker {
                     image "openjdk:8u232"
+                    reuseNode true
                 }
             }
             steps {
