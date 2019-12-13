@@ -1,14 +1,13 @@
 
 package io.jenkins.plugins.luxair;
 
-import com.google.common.hash.HashCode;
 
 import org.kohsuke.stapler.DataBoundConstructor;
 import hudson.model.StringParameterValue;
 
 public class ImageTagParameterValue extends StringParameterValue {
 
-    private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 19934923473827424L;
     private String value;
 
     @DataBoundConstructor

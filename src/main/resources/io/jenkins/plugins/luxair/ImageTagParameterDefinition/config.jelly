@@ -2,16 +2,24 @@
 <?jelly escape-by-default='true'?>
 <j:jelly xmlns:j="jelly:core" xmlns:st="jelly:stapler" xmlns:f="/lib/form">
 
+    <f:entry title="${%Name}" field="name">
+		<f:textbox />
+	</f:entry>
+
     <f:entry title="${%Image Name}" field="image">
-		<f:textbox name="parameter.image" value="${instance.image}" />
+		<f:textbox />
 	</f:entry>
 
     <f:entry title="${%Regitry URL}" field="registry">
-		<f:textbox name="parameter.registry" value="${instance.registry}" />
+		<f:textbox />
 	</f:entry>
 
-    <f:entry title="${%Registry Credential}" field="credential">
-		<f:textbox name="parameter.credential" value="${instance.credential}" />
+    <f:entry title="${%Registry Credential ID}" field="credentialid">
+		<f:textbox />
 	</f:entry>
+
+	 <f:entry title="Description" field="description">
+        <f:textarea />
+    </f:entry>
 
 </j:jelly>
