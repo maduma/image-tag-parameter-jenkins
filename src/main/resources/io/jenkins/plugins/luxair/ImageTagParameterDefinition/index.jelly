@@ -10,7 +10,7 @@
             <input type="hidden" name="description" value="${it.description}" />
 
 
-            <select name="value" style="width:100px; margin-left: 15px;">
+            <select name="value" style="width:300px; margin-left: 15px;">
                 <j:forEach var="aTag" items="${it.tags}" varStatus="loop">
                     <j:choose>
                         <option value="${aTag}">${aTag}</option>

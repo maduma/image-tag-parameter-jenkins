@@ -1,11 +1,12 @@
 package io.jenkins.plugins.luxair;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-
-import com.google.gson.JsonNull;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import kong.unirest.HttpResponse;
 import kong.unirest.JsonNode;
@@ -17,17 +18,39 @@ public class ImageTag {
 
     public static List<String> getTags(String image, String registry, String user, String password) {
 
-        String token = getAuthToken(registry, image, user, password);
+        String[] authService = getAuthService(registry);
+        String realm = authService[0];
+        String service = authService[1];
+        String token = getAuthToken(realm, service, image, user, password);
         List<String> tags = getImageTagsFromRegistry(image, registry, token);
         return tags;
     }
 
-    private static String getAuthToken(String registry, String image, String user, String password) {
+    private static String[] getAuthService(String registry) {
+
+        String[] rtn = new String[2];
+        rtn[0] = null;
+        rtn[1] = null;
+        String url = "https://" + registry + "/v2/";
+        String headerValue = Unirest.get(url).asEmpty()
+            .getHeaders().getFirst("Www-Authenticate");
+        String pattern = "Bearer realm=\"(\\S+)\",service=\"(\\S+)\"";
+        Matcher m = Pattern.compile(pattern).matcher(headerValue);
+        if (m.find()) {
+            logger.log(Level.INFO, "realm: " + m.group(1));
+            rtn[0] = m.group(1);
+            logger.log(Level.INFO, "service: " + m.group(2));
+            rtn[1] = m.group(2);
+        }
+        return rtn;
+    }
+
+    private static String getAuthToken(String realm, String service, String image, String user, String password) {
 
         String token = null;
-        String url = "https://" + registry + "/v2/token";
-        HttpResponse<JsonNode> response = Unirest.get(url)
-            .queryString("service", registry)
+        logger.log(Level.INFO, realm);
+        HttpResponse<JsonNode> response = Unirest.get(realm)
+            .queryString("service", service)
             .queryString("scope", "repository:" + image + ":pull")
             .asJson();
         if (response.isSuccess()) {
@@ -53,6 +76,7 @@ public class ImageTag {
                 tags.add(image + ":" + item.toString());
             });
         }
+        Collections.sort(tags, Collections.reverseOrder());
 
         return tags;
     }
