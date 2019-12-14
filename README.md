@@ -15,11 +15,23 @@ sdk install maven
 mvn -version
 ```
 
+## install fontconfig on ubuntu
+```
+sudo apt install -y fontconfig
+```
+Error without fontconfig
+```
+Caused by: java.lang.NullPointerException
+        at sun.awt.FontConfiguration.getVersion(FontConfiguration.java:1264)
+        at sun.awt.FontConfiguration.readFontConfigFile(FontConfiguration.java:219)
+```
+
 ## test and build
 ```
 mvn verify
 mvn hpi:run
 ```
+
 
 ## access the plugin
 Point the url to localhost:8080/jenkins

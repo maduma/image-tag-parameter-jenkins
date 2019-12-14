@@ -3,23 +3,27 @@
 <j:jelly xmlns:j="jelly:core" xmlns:st="jelly:stapler" xmlns:f="/lib/form">
 
     <f:entry title="${%Name}" field="name">
-		<f:textbox />
+		<f:textbox default="DOCKER_IMAGE" />
 	</f:entry>
 
     <f:entry title="${%Image Name}" field="image">
-		<f:textbox />
+		<f:textbox default="library/ubuntu" />
+	</f:entry>
+
+    <f:entry title="${%Filter Pattern}" field="filter">
+		<f:textbox default=".*" />
 	</f:entry>
 
     <f:entry title="${%Regitry URL}" field="registry">
-		<f:textbox />
-	</f:entry>
-
-    <f:entry title="${%Registry Credential ID}" field="credentialid">
-		<f:textbox />
+		<f:textbox default="https://registry-1.docker.io"/>
 	</f:entry>
 
 	 <f:entry title="Description" field="description">
         <f:textarea />
     </f:entry>
+
+	<f:entry title="${%Registry Credential ID}" field="credentialid">
+		<f:password />
+	</f:entry>
 
 </j:jelly>
