@@ -25,7 +25,9 @@ public class ImageTag {
         String service = authService[1];
         String token = getAuthToken(realm, service, image, user, password);
         List<String> tags = getImageTagsFromRegistry(image, registry, token);
-        return tags.stream().filter(it -> it.matches(filter)).collect(Collectors.toList());
+        return tags.stream().filter(tag -> tag.matches(filter))
+            .map(tag -> image + ":" + tag)
+            .collect(Collectors.toList());
     }
 
     private static String[] getAuthService(String registry) {
@@ -50,7 +52,6 @@ public class ImageTag {
     private static String getAuthToken(String realm, String service, String image, String user, String password) {
 
         String token = "";
-        logger.log(Level.INFO, realm);
         GetRequest request = Unirest.get(realm);
         if (!user.isEmpty() && !password.isEmpty()) {
             request = request.basicAuth(user, password);
@@ -78,8 +79,7 @@ public class ImageTag {
         logger.log(Level.INFO, response.getStatusText());
         if (response.isSuccess()) {
             response.getBody().getObject().getJSONArray("tags").forEach(item -> {
-                logger.log(Level.INFO, "- " + item.toString());
-                tags.add(image + ":" + item.toString());
+                tags.add(item.toString());
             });
         }
         Collections.sort(tags, Collections.reverseOrder());
