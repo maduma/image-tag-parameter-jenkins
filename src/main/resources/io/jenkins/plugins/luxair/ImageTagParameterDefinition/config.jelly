@@ -1,6 +1,6 @@
 <!-- this is the page fragment displayed to set up a job -->
 <?jelly escape-by-default='true'?>
-<j:jelly xmlns:j="jelly:core" xmlns:st="jelly:stapler" xmlns:f="/lib/form">
+<j:jelly xmlns:j="jelly:core" xmlns:st="jelly:stapler" xmlns:f="/lib/form" xmlns:c="/lib/credentials">
 
     <f:entry title="${%Name}" field="name">
 		<f:textbox default="DOCKER_IMAGE" />
@@ -22,8 +22,8 @@
         <f:textarea />
     </f:entry>
 
-	<f:entry title="${%Registry Credential ID}" field="credentialid">
-		<f:password />
+	<f:entry title="${%Registry Credential ID}" field="credentialId">
+		<c:select />
 	</f:entry>
 
 </j:jelly>
