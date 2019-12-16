@@ -36,15 +36,21 @@ public class ImageTag {
         rtn[0] = "";
         rtn[1] = "";
         String url = registry + "/v2/";
+
+        Unirest.config().enableCookieManagement(false);
         String headerValue = Unirest.get(url).asEmpty()
             .getHeaders().getFirst("Www-Authenticate");
+        Unirest.shutDown();
+
         String pattern = "Bearer realm=\"(\\S+)\",service=\"(\\S+)\"";
         Matcher m = Pattern.compile(pattern).matcher(headerValue);
         if (m.find()) {
-            logger.log(Level.INFO, "realm: " + m.group(1));
             rtn[0] = m.group(1);
-            logger.log(Level.INFO, "service: " + m.group(2));
             rtn[1] = m.group(2);
+            logger.log(Level.INFO, "realm:" + rtn[0] + ": service:" + rtn[1] + ":");
+        } else {
+
+            logger.log(Level.WARNING, "No AuthService available from " + url);
         }
         return rtn;
     }
@@ -52,9 +58,14 @@ public class ImageTag {
     private static String getAuthToken(String realm, String service, String image, String user, String password) {
 
         String token = "";
+
+        Unirest.config().enableCookieManagement(false);
         GetRequest request = Unirest.get(realm);
         if (!user.isEmpty() && !password.isEmpty()) {
+            logger.log(Level.INFO, "Basic authentication");
             request = request.basicAuth(user, password);
+        } else {
+            logger.log(Level.INFO, "No basic authentication");
         }
         HttpResponse<JsonNode> response = request 
             .queryString("service", service)
@@ -62,28 +73,35 @@ public class ImageTag {
             .asJson();
         if (response.isSuccess()) {
             token = response.getBody().getObject().getString("token");
+            logger.log(Level.INFO, "Token received");
+        } else {
+            logger.log(Level.WARNING, "Token not received");
         }
+        Unirest.shutDown();
 
-        logger.log(Level.INFO, token);
         return token;
     }
 
     private static List<String> getImageTagsFromRegistry(String image, String registry, String token) {
         List<String> tags = new ArrayList<>();
         String url = registry + "/v2/{image}/tags/list";
-        logger.log(Level.INFO, url);
+
+        Unirest.config().enableCookieManagement(false);
         HttpResponse<JsonNode> response = Unirest.get(url)
             .header("Authorization", "Bearer " + token)
             .routeParam("image", image)
             .asJson();
-        logger.log(Level.INFO, response.getStatusText());
         if (response.isSuccess()) {
+            logger.log(Level.INFO, "HTTP status: " + response.getStatusText());
             response.getBody().getObject().getJSONArray("tags").forEach(item -> {
                 tags.add(item.toString());
             });
+        } else {
+            logger.log(Level.WARNING, "HTTP status: " + response.getStatusText());
         }
-        Collections.sort(tags, Collections.reverseOrder());
+        Unirest.shutDown();
 
+        Collections.sort(tags, Collections.reverseOrder());
         return tags;
     }
 }
