@@ -98,6 +98,7 @@ public class ImageTag {
             });
         } else {
             logger.log(Level.WARNING, "HTTP status: " + response.getStatusText());
+            tags.add(" " + response.getStatusText() + " !");
         }
         Unirest.shutDown();
 

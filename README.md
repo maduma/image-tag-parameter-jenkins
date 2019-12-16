@@ -26,12 +26,13 @@ Caused by: java.lang.NullPointerException
         at sun.awt.FontConfiguration.readFontConfigFile(FontConfiguration.java:219)
 ```
 
-## test and build
+## test, build and package
 ```
 mvn verify
 mvn hpi:run
+mvn package
 ```
+Plugin **./target/Image_Tag_Parameter.hpi** can be installed on any jenkins instance
 
-
-## access the plugin
-Point the url to localhost:8080/jenkins
+## access the dev environment
+Point the url to http://localhost:8080/jenkins
