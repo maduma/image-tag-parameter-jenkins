@@ -1,18 +1,24 @@
 package io.jenkins.plugins.luxair;
 
+import com.cloudbees.hudson.plugins.folder.Folder;
 import com.cloudbees.plugins.credentials.CredentialsMatchers;
 import com.cloudbees.plugins.credentials.CredentialsProvider;
 import com.cloudbees.plugins.credentials.common.StandardListBoxModel;
 import com.cloudbees.plugins.credentials.common.StandardUsernameCredentials;
 import com.cloudbees.plugins.credentials.common.StandardUsernamePasswordCredentials;
-import com.cloudbees.plugins.credentials.domains.DomainRequirement;
+//import com.cloudbees.hudson.plugins.folder.Folder;
 import hudson.Extension;
+import hudson.model.FreeStyleProject;
 import hudson.model.Item;
+import hudson.model.ItemGroup;
 import hudson.model.ParameterValue;
 import hudson.model.SimpleParameterDefinition;
 import hudson.model.StringParameterValue;
 import hudson.security.ACL;
 import hudson.util.ListBoxModel;
+
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -73,21 +79,27 @@ public class ImageTagParameterDefinition extends SimpleParameterDefinition {
         String password = "";
 
         if (!credentialId.isEmpty()) {
+            final List<StandardUsernamePasswordCredentials> allcreds = new ArrayList<>();
+            Jenkins.get().getItemGroup().getAllItems(Folder.class).forEach(it -> {
+                List<StandardUsernamePasswordCredentials> creds;
+                creds = CredentialsProvider.lookupCredentials(
+                    StandardUsernamePasswordCredentials.class, (Item) it, ACL.SYSTEM,
+                    Collections.emptyList());
+                allcreds.addAll(creds);
+                creds.forEach(cred -> { 
+                    logger.log(Level.INFO, "- :" + cred.getId() + "");
+                });
+            });
+
             StandardUsernamePasswordCredentials c = CredentialsMatchers.firstOrNull(
-                CredentialsProvider.lookupCredentials(
-                    StandardUsernamePasswordCredentials.class,
-                    Jenkins.getInstanceOrNull().getItemGroup(),
-                    ACL.SYSTEM,
-                    new DomainRequirement()
-                ),
-                CredentialsMatchers.withId(credentialId)
-            );
+                allcreds, CredentialsMatchers.withId(credentialId));
             if (c != null) {
                 user = c.getUsername();
                 password = c.getPassword().getPlainText();
             } else {
                 logger.log(Level.INFO, "Cannot find credential for :" + credentialId + ":");
             }
+
         } else {
             logger.log(Level.INFO, "CredentialId is empty");
         }
