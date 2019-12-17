@@ -21,9 +21,7 @@ public class ImageTag {
     public static List<String> getTags(String image, String registry, String filter, String user, String password) {
 
         String[] authService = getAuthService(registry);
-        String realm = authService[0];
-        String service = authService[1];
-        String token = getAuthToken(realm, service, image, user, password);
+        String token = getAuthToken(authService, image, user, password);
         List<String> tags = getImageTagsFromRegistry(image, registry, token);
         return tags.stream().filter(tag -> tag.matches(filter))
             .map(tag -> image + ":" + tag)
@@ -37,6 +35,7 @@ public class ImageTag {
         rtn[1] = "";
         String url = registry + "/v2/";
 
+        Unirest.config().reset();
         Unirest.config().enableCookieManagement(false);
         String headerValue = Unirest.get(url).asEmpty()
             .getHeaders().getFirst("Www-Authenticate");
@@ -47,25 +46,27 @@ public class ImageTag {
         if (m.find()) {
             rtn[0] = m.group(1);
             rtn[1] = m.group(2);
-            logger.log(Level.INFO, "realm:" + rtn[0] + ": service:" + rtn[1] + ":");
+            logger.info("realm:" + rtn[0] + ": service:" + rtn[1] + ":");
         } else {
-
-            logger.log(Level.WARNING, "No AuthService available from " + url);
+            logger.warning("No AuthService available from " + url);
         }
         return rtn;
     }
 
-    private static String getAuthToken(String realm, String service, String image, String user, String password) {
+    private static String getAuthToken(String[] authService, String image, String user, String password) {
 
+        String realm = authService[0];
+        String service = authService[1];
         String token = "";
 
+        Unirest.config().reset();
         Unirest.config().enableCookieManagement(false);
         GetRequest request = Unirest.get(realm);
         if (!user.isEmpty() && !password.isEmpty()) {
-            logger.log(Level.INFO, "Basic authentication");
+            logger.info("Basic authentication");
             request = request.basicAuth(user, password);
         } else {
-            logger.log(Level.INFO, "No basic authentication");
+            logger.info("No basic authentication");
         }
         HttpResponse<JsonNode> response = request 
             .queryString("service", service)
@@ -73,9 +74,9 @@ public class ImageTag {
             .asJson();
         if (response.isSuccess()) {
             token = response.getBody().getObject().getString("token");
-            logger.log(Level.INFO, "Token received");
+            logger.info("Token received");
         } else {
-            logger.log(Level.WARNING, "Token not received");
+            logger.warning("Token not received");
         }
         Unirest.shutDown();
 
@@ -86,18 +87,19 @@ public class ImageTag {
         List<String> tags = new ArrayList<>();
         String url = registry + "/v2/{image}/tags/list";
 
+        Unirest.config().reset();
         Unirest.config().enableCookieManagement(false);
         HttpResponse<JsonNode> response = Unirest.get(url)
             .header("Authorization", "Bearer " + token)
             .routeParam("image", image)
             .asJson();
         if (response.isSuccess()) {
-            logger.log(Level.INFO, "HTTP status: " + response.getStatusText());
+            logger.info("HTTP status: " + response.getStatusText());
             response.getBody().getObject().getJSONArray("tags").forEach(item -> {
                 tags.add(item.toString());
             });
         } else {
-            logger.log(Level.WARNING, "HTTP status: " + response.getStatusText());
+            logger.warning("HTTP status: " + response.getStatusText());
             tags.add(" " + response.getStatusText() + " !");
         }
         Unirest.shutDown();

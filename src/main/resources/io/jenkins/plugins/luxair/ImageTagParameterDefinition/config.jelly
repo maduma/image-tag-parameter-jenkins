@@ -7,7 +7,7 @@
 	</f:entry>
 
     <f:entry title="${%Image Name}" field="image">
-		<f:textbox default="library/ubuntu" />
+		<f:textbox default="builder" />
 	</f:entry>
 
     <f:entry title="${%Tag Filter Pattern}" field="filter">
@@ -15,7 +15,7 @@
 	</f:entry>
 
     <f:entry title="${%Regitry URL}" field="registry">
-		<f:textbox default="https://registry-1.docker.io"/>
+		<f:textbox default="https://registry.in.luxair.lu"/>
 	</f:entry>
 
 	 <f:entry title="Description" field="description">

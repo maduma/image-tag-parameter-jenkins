@@ -73,6 +73,7 @@ for (plugin in [
     "pam-auth",
     "ldap",
     "email-ext",
+    "configuration-as-code",
     ]) {
 	e = Hudson.instance.updateCenter.getPlugin(plugin).deploy().get().getError()
 	if (e != null)

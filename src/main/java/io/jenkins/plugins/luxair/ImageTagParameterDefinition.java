@@ -38,7 +38,7 @@ public class ImageTagParameterDefinition extends SimpleParameterDefinition {
         this.image = image;
         this.registry = registry;
         if (filter.isEmpty()) {
-            this.filter = getDefaultFilter();
+            this.filter = ".*";
         } else {
             this.filter = filter;
         }
@@ -57,15 +57,12 @@ public class ImageTagParameterDefinition extends SimpleParameterDefinition {
         return filter;
     }
 
-    public String getDefaultFilter() {
-        return ".*";
-    }
-
     public String getCredentialId() {
         return credentialId;
     }
 
     private StandardUsernamePasswordCredentials findCredential(String credentialId) {
+        logger.info("credentialId:" + credentialId + ":");
         if (!credentialId.isEmpty()) {
             List<Item> items = Jenkins.get().getAllItems();
             for (Item item : items) {
@@ -80,9 +77,9 @@ public class ImageTagParameterDefinition extends SimpleParameterDefinition {
                     }
                 }
             }
-            logger.log(Level.WARNING, "Cannot find credential for :" + credentialId + ":");
+            logger.warning("Cannot find credential for :" + credentialId + ":");
         } else {
-            logger.log(Level.INFO, "CredentialId is empty");
+            logger.info("CredentialId is empty");
         }
         return null;
     }
@@ -97,7 +94,6 @@ public class ImageTagParameterDefinition extends SimpleParameterDefinition {
             user = credential.getUsername();
             password = credential.getPassword().getPlainText();
         }
-
         imageTags = ImageTag.getTags(image, registry, filter, user, password);
         return imageTags;
     }
@@ -125,13 +121,9 @@ public class ImageTagParameterDefinition extends SimpleParameterDefinition {
         public ListBoxModel doFillCredentialIdItems(@AncestorInPath Item context,
                                                     @QueryParameter String credentialId,
                                                     @QueryParameter String registry) {
-            logger.log(Level.INFO, "context :" + context + ":");
-            logger.log(Level.INFO, "credentialId :" + credentialId + ":");
-            logger.log(Level.INFO, "registry :" + registry + ":");
-            logger.log(Level.INFO, "Authentication :" + Jenkins.getAuthentication() + ":");
             if (context == null && !Jenkins.get().hasPermission(Jenkins.ADMINISTER) ||
                 context != null && !context.hasPermission(Item.EXTENDED_READ)) {
-                logger.log(Level.INFO, "No permission to list credential");
+                logger.info("No permission to list credential");
                 return new StandardListBoxModel().includeCurrentValue(credentialId);
             }
             return new StandardListBoxModel()
@@ -139,7 +131,5 @@ public class ImageTagParameterDefinition extends SimpleParameterDefinition {
                     .includeAs(ACL.SYSTEM, context, StandardUsernameCredentials.class)
                     .includeCurrentValue(credentialId);
         }
-
     }
-
 }
