@@ -62,7 +62,6 @@ public class ImageTagParameterDefinition extends SimpleParameterDefinition {
     }
 
     private StandardUsernamePasswordCredentials findCredential(String credentialId) {
-        logger.info("credentialId:" + credentialId + ":");
         if (!credentialId.isEmpty()) {
             List<Item> items = Jenkins.get().getAllItems();
             for (Item item : items) {
