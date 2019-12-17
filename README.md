@@ -1,3 +1,7 @@
+# Image Tag Parameter
+This plungins allows you to define (container) image tags as parameter in you builds.  
+It use the Docker Registry HTTP API V2 to list tags availaible for an image.
+
 # how to build the Jenkins Plugin
  
 ## Install skdman
