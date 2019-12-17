@@ -36,3 +36,7 @@ Plugin **./target/Image_Tag_Parameter.hpi** can be installed on any jenkins inst
 
 ## access the dev environment
 Point the url to http://localhost:8080/jenkins
+
+## Screenshots
+![Configuration](screen01.png)
+![Image Selection](screen02.png)
