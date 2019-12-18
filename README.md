@@ -2,6 +2,10 @@
 This plungins allows you to define (container) image tags as parameter in you builds.  
 It use the Docker Registry HTTP API V2 to list tags availaible for an image.
 
+## Screenshots
+![Configuration](screen01.png)
+![Image Selection](screen02.png)
+
 # how to build the Jenkins Plugin
  
 ## Install skdman
@@ -40,7 +44,3 @@ Plugin **./target/Image_Tag_Parameter.hpi** can be installed on any jenkins inst
 
 ## access the dev environment
 Point the url to http://localhost:8080/jenkins
-
-## Screenshots
-![Configuration](screen01.png)
-![Image Selection](screen02.png)
