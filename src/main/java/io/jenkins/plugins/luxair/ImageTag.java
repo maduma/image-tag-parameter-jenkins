@@ -3,13 +3,13 @@ package io.jenkins.plugins.luxair;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 import kong.unirest.GetRequest;
 import kong.unirest.HttpResponse;
+import kong.unirest.Interceptor;
 import kong.unirest.JsonNode;
 import kong.unirest.Unirest;
 
@@ -17,6 +17,7 @@ import kong.unirest.Unirest;
 public class ImageTag {
 
     private static final Logger logger = Logger.getLogger(ImageTag.class.getName());
+    private static final Interceptor errorInterceptor = new ErrorInterceptor();
 
     public static List<String> getTags(String image, String registry, String filter, String user, String password) {
 
@@ -36,7 +37,7 @@ public class ImageTag {
         String url = registry + "/v2/";
 
         Unirest.config().reset();
-        Unirest.config().enableCookieManagement(false);
+        Unirest.config().enableCookieManagement(false).interceptor(errorInterceptor);
         String headerValue = Unirest.get(url).asEmpty()
             .getHeaders().getFirst("Www-Authenticate");
         Unirest.shutDown();
@@ -60,7 +61,7 @@ public class ImageTag {
         String token = "";
 
         Unirest.config().reset();
-        Unirest.config().enableCookieManagement(false);
+        Unirest.config().enableCookieManagement(false).interceptor(errorInterceptor);
         GetRequest request = Unirest.get(realm);
         if (!user.isEmpty() && !password.isEmpty()) {
             logger.info("Basic authentication");
@@ -88,7 +89,7 @@ public class ImageTag {
         String url = registry + "/v2/{image}/tags/list";
 
         Unirest.config().reset();
-        Unirest.config().enableCookieManagement(false);
+        Unirest.config().enableCookieManagement(false).interceptor(errorInterceptor);
         HttpResponse<JsonNode> response = Unirest.get(url)
             .header("Authorization", "Bearer " + token)
             .routeParam("image", image)
